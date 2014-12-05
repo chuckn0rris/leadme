@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
 /**
@@ -30,7 +34,7 @@ public class MapsFragment extends MapFragment {
     private String mParam1;
     private String mParam2;
 
-    MapsFragment mapFragment;
+    MapFragment mapFragment;
     GoogleMap map;
     final String TAG = "myLogs";
 
@@ -56,15 +60,47 @@ public class MapsFragment extends MapFragment {
 
     public MapsFragment() {
         // Required empty public constructor
+
+        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        map = mapFragment.getMap();
+        if (map == null) {
+            finish();
+            return;
+        }
+        init();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+    private void init() {
+        map.setMyLocationEnabled(true);
+
+        UiSettings uiSettings = map.getUiSettings();
+        uiSettings.setMyLocationButtonEnabled(true);
+
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                map.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(latLng.toString())
+                        .icon(BitmapDescriptorFactory
+                                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            }
+        });
+    }
+
+    private void finish() {
+
     }
 
     @Override

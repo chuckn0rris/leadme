@@ -25,96 +25,43 @@ import com.google.android.gms.maps.model.MarkerOptions;
  * create an instance of this fragment.
  */
 public class MapsFragment extends MapFragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String ARG_SECTION_NUMBER = "section_number";
 
     MapFragment mapFragment;
     GoogleMap map;
+
     final String TAG = "myLogs";
 
     private OnFragmentInteractionListener mListener;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MapsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MapsFragment newInstance(String param1, String param2) {
+    public static MapsFragment newInstance(int sectionNumber) {
         MapsFragment fragment = new MapsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
 
     public MapsFragment() {
         // Required empty public constructor
-
-        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-        map = mapFragment.getMap();
-        if (map == null) {
-            finish();
-            return;
-        }
-        init();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    private void init() {
-        map.setMyLocationEnabled(true);
-
-        UiSettings uiSettings = map.getUiSettings();
-        uiSettings.setMyLocationButtonEnabled(true);
-
-        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-
-            @Override
-            public void onMapLongClick(LatLng latLng) {
-                map.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(latLng.toString())
-                        .icon(BitmapDescriptorFactory
-                                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-            }
-        });
-    }
-
-    private void finish() {
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_map, container, false);
-    }
+        View v = inflater.inflate(R.layout.fragment_map, container, false);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        initMapConfigs();
+
+        return v;
     }
 
     @Override
@@ -145,8 +92,40 @@ public class MapsFragment extends MapFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
+
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    private void initMapConfigs() {
+        mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+
+        if (mapFragment != null) {
+            map = mapFragment.getMap();
+            if (map == null) {
+                return;
+            }
+        }
+        map.setMyLocationEnabled(true);
+
+        UiSettings uiSettings = map.getUiSettings();
+        uiSettings.setMyLocationButtonEnabled(true);
+
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                map.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(latLng.toString())
+                        .icon(BitmapDescriptorFactory
+                                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            }
+        });
+    }
+
+    private void finish() {
+
     }
 
 }
